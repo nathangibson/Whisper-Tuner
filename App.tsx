@@ -116,7 +116,7 @@ const App: React.FC = () => {
                       <p><strong>Required Setup:</strong> Create a folder in Drive with:</p>
                       <ul className="list-disc list-inside mt-1 ml-1 opacity-80">
                         <li>Your <code>.wav</code> audio files</li>
-                        <li>A <code>metadata.csv</code> (columns: <code>file_name</code>, <code>transcription</code>)</li>
+                        <li>A <code>metadata.csv</code> file. <strong>The first line must be:</strong> <code>file_name,transcription</code></li>
                       </ul>
                     </div>
                   )}

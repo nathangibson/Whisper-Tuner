@@ -48,6 +48,18 @@ export const generateNotebookPlan = async (input: UserInput): Promise<NotebookPl
         - Provide clear text instructions on how to organize files in Drive:
           "Create a folder named 'my_whisper_data'. Inside, upload your audio files (.wav) and a 'metadata.csv' file. The CSV must have 'file_name' and 'transcription' columns."
         - Show how to load this using the \`audiofolder\` feature: \`dataset = load_dataset("audiofolder", data_dir="/content/drive/MyDrive/my_whisper_data")\`.
+        - **CRITICAL**: Add Python code to verify column names immediately after loading. 
+          Use this logic:
+          \`\`\`python
+          print("Column names:", dataset["train"].column_names)
+          if "transcription" not in dataset["train"].column_names:
+              if "text" in dataset["train"].column_names:
+                  dataset = dataset.rename_column("text", "transcription")
+              elif "sentence" in dataset["train"].column_names:
+                  dataset = dataset.rename_column("sentence", "transcription")
+              else:
+                  raise ValueError("KeyError: 'transcription' column not found. Please ensure your metadata.csv has a header row: 'file_name,transcription'")
+          \`\`\`
     3.  **Preprocessing**: Explain FeatureExtractor and Tokenizer simply. Show how to cast the audio column to 16kHz using \`Audio(sampling_rate=16000)\`.
     4.  **Training**: Use \`Seq2SeqTrainer\`. 
         - Set \`predict_with_generate=True\`.
