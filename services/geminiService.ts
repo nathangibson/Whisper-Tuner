@@ -64,11 +64,16 @@ export const generateNotebookPlan = async (input: UserInput): Promise<NotebookPl
                   raise ValueError("KeyError: 'transcription' column not found. Please ensure your metadata.csv has a header row: 'file_name,transcription'")
           \`\`\`
     3.  **Preprocessing**: Explain FeatureExtractor and Tokenizer simply. Show how to cast the audio column to 16kHz using \`Audio(sampling_rate=16000)\`.
-    4.  **Training**: Use \`Seq2SeqTrainer\`. 
+    4.  **Data Collator**: 
+        - **CRITICAL FIX**: Do NOT import \`DataCollatorSpeechSeq2SeqWithPadding\` from transformers. It is not available in the library.
+        - Instead, **define the class manually** in the code block. 
+        - Include necessary imports: \`from dataclasses import dataclass\`, \`from typing import Any, Dict, List, Union\`.
+        - The class handles padding input_features and labels independently.
+    5.  **Training**: Use \`Seq2SeqTrainer\`. 
         - Set \`predict_with_generate=True\`.
         - Set \`fp16=True\` (if GPU available, explain this check).
         - Explain batch size and learning rate simply.
-    5.  **Inference**: Show how to load the *fine-tuned* checkpoint and transcribe a new audio file or a sample from the test set.
+    6.  **Inference**: Show how to load the *fine-tuned* checkpoint and transcribe a new audio file or a sample from the test set.
     
     Tone: Educational, encouraging, and clear. Explain *why* each step is needed.
     Structure: Return a valid JSON object matching the schema.
