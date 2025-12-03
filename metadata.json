@@ -1,0 +1,5 @@
+{
+  "name": "WhisperTuner Guide",
+  "description": "An interactive tool to generate and explain a Google Colab notebook for fine-tuning WhisperAI models with custom data.",
+  "requestFramePermissions": []
+}
