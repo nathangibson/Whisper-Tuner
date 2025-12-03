@@ -31,7 +31,7 @@ export const generateNotebookPlan = async (input: UserInput): Promise<NotebookPl
   const model = "gemini-2.5-flash";
   
   const prompt = `
-    Create a detailed, step-by-step plan for a Google Colab notebook to fine-tune the OpenAI Whisper model.
+    Create a detailed, step-by-step plan for a Google Colab / Jupyter notebook to fine-tune the OpenAI Whisper model.
     
     Configuration:
     - Model Size: ${input.modelSize} (e.g., openai/whisper-${input.modelSize})
@@ -45,9 +45,12 @@ export const generateNotebookPlan = async (input: UserInput): Promise<NotebookPl
         *CRITICAL*: Include \`pip install torchcodec\` to avoid audio decoding errors with recent PyTorch versions.
     2.  **Data Loading**: 
         - If 'google_drive', explicitly show code to mount drive (from google.colab import drive).
-        - Provide clear text instructions on how to organize files in Drive:
-          "Create a folder named 'my_whisper_data'. Inside, upload your audio files (.wav) and a 'metadata.csv' file. The CSV must have 'file_name' and 'transcription' columns."
-        - Show how to load this using the \`audiofolder\` feature: \`dataset = load_dataset("audiofolder", data_dir="/content/drive/MyDrive/my_whisper_data")\`.
+          - Path should be roughly "/content/drive/MyDrive/my_whisper_data".
+          - Provide clear text instructions to organize files in Drive: "Create a folder named 'my_whisper_data'. Inside, upload your audio files (.wav) and a 'metadata.csv' file. The CSV must have 'file_name' and 'transcription' columns."
+        - If 'local', do NOT mount drive. 
+          - Set the data directory variable to "./my_whisper_data".
+          - Provide text instructions in the markdown to "Place a folder named 'my_whisper_data' in the SAME directory as this notebook. It should contain your audio files and metadata.csv."
+        - For both 'google_drive' and 'local', use \`dataset = load_dataset("audiofolder", data_dir=...)\`.
         - **CRITICAL**: Add Python code to verify column names immediately after loading. 
           Use this logic:
           \`\`\`python
@@ -63,7 +66,7 @@ export const generateNotebookPlan = async (input: UserInput): Promise<NotebookPl
     3.  **Preprocessing**: Explain FeatureExtractor and Tokenizer simply. Show how to cast the audio column to 16kHz using \`Audio(sampling_rate=16000)\`.
     4.  **Training**: Use \`Seq2SeqTrainer\`. 
         - Set \`predict_with_generate=True\`.
-        - Set \`fp16=True\`.
+        - Set \`fp16=True\` (if GPU available, explain this check).
         - Explain batch size and learning rate simply.
     5.  **Inference**: Show how to load the *fine-tuned* checkpoint and transcribe a new audio file or a sample from the test set.
     

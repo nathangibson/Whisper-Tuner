@@ -3,7 +3,7 @@ import { generateNotebookPlan } from './services/geminiService';
 import { NotebookPlan, UserInput } from './types';
 import { StepCard } from './components/StepCard';
 import { downloadIpynb } from './utils/notebookConverter';
-import { BookOpen, Download, Loader2, PlayCircle, Settings, HardDrive, Cpu, AlertTriangle } from 'lucide-react';
+import { BookOpen, Download, Loader2, PlayCircle, Settings, HardDrive, Cpu, AlertTriangle, FolderOpen } from 'lucide-react';
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -108,15 +108,29 @@ const App: React.FC = () => {
                     onChange={(e) => setInput({...input, dataSource: e.target.value as any})}
                     className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
                   >
-                    <option value="google_drive">Google Drive (Recommended for Custom Files)</option>
+                    <option value="google_drive">Google Drive (Recommended for Colab)</option>
+                    <option value="local">Local Files (VS Code / Jupyter)</option>
                     <option value="huggingface_hub">HuggingFace Hub</option>
                   </select>
+                  
                   {input.dataSource === 'google_drive' && (
-                    <div className="text-xs text-blue-300/80 bg-blue-900/20 p-2 rounded border border-blue-900/30 mt-2">
-                      <p><strong>Required Setup:</strong> Create a folder in Drive with:</p>
-                      <ul className="list-disc list-inside mt-1 ml-1 opacity-80">
-                        <li>Your <code>.wav</code> audio files</li>
-                        <li>A <code>metadata.csv</code> file. <strong>The first line must be:</strong> <code>file_name,transcription</code></li>
+                    <div className="text-xs text-blue-300/80 bg-blue-900/20 p-3 rounded-lg border border-blue-900/30 mt-2">
+                      <p className="font-semibold mb-1 flex items-center gap-1"><FolderOpen className="w-3 h-3" /> Drive Setup:</p>
+                      <p className="mb-1">Create a folder <code>my_whisper_data</code> in your Drive root containing:</p>
+                      <ul className="list-disc list-inside opacity-80 space-y-1">
+                        <li>Your audio files (<code>.wav</code>)</li>
+                        <li>A <code>metadata.csv</code> with header: <code>file_name,transcription</code></li>
+                      </ul>
+                    </div>
+                  )}
+
+                  {input.dataSource === 'local' && (
+                    <div className="text-xs text-amber-300/80 bg-amber-900/20 p-3 rounded-lg border border-amber-900/30 mt-2">
+                      <p className="font-semibold mb-1 flex items-center gap-1"><FolderOpen className="w-3 h-3" /> Local Setup:</p>
+                      <p className="mb-1">Ensure a folder <code>my_whisper_data</code> exists in the <strong>same directory</strong> as your notebook containing:</p>
+                      <ul className="list-disc list-inside opacity-80 space-y-1">
+                        <li>Your audio files (<code>.wav</code>)</li>
+                        <li>A <code>metadata.csv</code> with header: <code>file_name,transcription</code></li>
                       </ul>
                     </div>
                   )}
@@ -192,8 +206,11 @@ const App: React.FC = () => {
             <div className="bg-blue-900/10 border border-blue-800/30 p-6 rounded-xl text-center">
               <h3 className="text-lg font-semibold text-blue-300 mb-2">Ready to start?</h3>
               <p className="text-slate-400 mb-6">
-                Download the .ipynb file above and upload it to <a href="https://colab.research.google.com" target="_blank" rel="noreferrer" className="text-blue-400 hover:underline">colab.research.google.com</a>.
-                Make sure to enable GPU Runtime (Runtime {'>'} Change runtime type {'>'} T4 GPU).
+                Download the .ipynb file above and run it in your environment.
+                {input.dataSource === 'google_drive' ? 
+                  " Upload it to colab.research.google.com and enable GPU Runtime." : 
+                  " Ensure your local environment has a GPU enabled (e.g. CUDA)."
+                }
               </p>
             </div>
           </div>

@@ -15,5 +15,5 @@ export interface NotebookPlan {
 export interface UserInput {
   modelSize: 'tiny' | 'base' | 'small' | 'medium' | 'large';
   language: string;
-  dataSource: 'google_drive' | 'huggingface_hub';
+  dataSource: 'google_drive' | 'huggingface_hub' | 'local';
 }
